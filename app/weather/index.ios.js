@@ -16,15 +16,15 @@ class weather extends Component {
       lastPosition: '',
       pin: {
         latitude: 0,
-        longitude: 0,
+        longitude: 0
       },
       pins: [],
       crimePins: [],
       barPins: [],
       watchId: '',
       go: true,
-      longitudeDelta: 0.1,
-      latitudeDelta: 0.1
+      longitudeDelta: 0.03,
+      latitudeDelta: 0.03
      }
   }
 

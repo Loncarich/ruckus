@@ -1,3 +1,5 @@
+import { MapView } from 'react-native';
+
 export default function fetchData (latitude, longitude, param) {
 
     fetchCrime.call(param, latitude, longitude)
@@ -23,9 +25,12 @@ function fetchCrime(latitude, longitude){
         var tempPins= JSON.parse(responseJSON.body);
         //console.log('tempPins', tempPins)
         var crimePins= tempPins.map(function(crime){
-          return {latitude: crime.geo_crime_location.coordinates[1], longitude: crime.geo_crime_location.coordinates[0]};
+          return {latitude: crime.geo_crime_location.coordinates[1],
+                  longitude: crime.geo_crime_location.coordinates[0],
+                  title: crime.statistical_code_description,
+                  image: require('../skull20.png')};
         });
-        console.log('tempPins', crimePins);
+        //console.log('tempPins', crimePins);
         var tempPins= this.state.pins.concat(crimePins);
         this.setState({pins: tempPins})
         resolve(latitude, longitude);
@@ -50,8 +55,14 @@ function fetchVice(latitude, longitude){
     //var temp= response.json();
     //console.log('yelp Data', responseJSON);
     const barsArray= responseJSON.businesses;
-    const barPins= barsArray.map((bar) => bar.location.coordinate)
-    console.log('barPins', barPins);
+    console.log('barsArray', barsArray);
+    const barPins= barsArray.map(function(bar){
+      return {latitude: bar.location.coordinate.latitude,
+              longitude: bar.location.coordinate.longitude,
+              onFocus:
+              title: bar.name,
+              image: require('../martini24.png')}})
+    //console.log('barPins', barPins);
     const tempPins= this.state.pins.concat(barPins);
     this.setState({pins: tempPins});
   })
