@@ -1,9 +1,3 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
-
 import React, { Component } from 'react';
 import {
   AppRegistry,
@@ -12,49 +6,55 @@ import {
   MapView,
   View
 } from 'react-native';
-import fetchWeather from './src/api.js';
+import fetchData from './src/api.js';
 
 class weather extends Component {
   constructor(props) {
     super(props)
     this.state= {
-      pin: {
-        latitude: 0,
-        longitude: 0
-      },
       initialPosition: '',
       lastPosition: '',
-      watchId: ''
+      pin: {
+        latitude: 0,
+        longitude: 0,
+      },
+      pins: [],
+      crimePins: [],
+      barPins: [],
+      watchId: '',
+      go: true,
+      longitudeDelta: 0.1,
+      latitudeDelta: 0.1
      }
   }
 
-  onRegionChangeComplete(region) {
-    this.setState({pin: {
-      longitude: region.longitude,
-      latitude: region.latitude
-    }})
-  }
-
-    // fetchWeather(region.longitude, region.latitude).then((data) => {
-    //   console.log(data);
-    //   this.setState(data)})
-
-
-
-
+  // onRegionChangeComplete(region) {
+  //   if(this.state.initialPosition !== '' && this.state.go) {
+  //     this.setState({pin: {
+  //       longitude: region.longitude,
+  //       latitude: region.latitude
+  //     }})
+  //     this.setState({go: false});
+  //   }
+  // }
 
   componentDidMount() {
-    console.log('test');
+    const that= this;
+    //Icon.getImageSource('md-beer', 30).then((source) => this.setState({ beerIcon: source }));
     navigator.geolocation.getCurrentPosition(
-      (position) => {
-        console.log('inside navigator location', position);
-        var initialPosition = JSON.stringify(position);
-        this.setState({initialPosition});
-        console.log(initialPosition);
-      },
-      (error) => alert(error.message),
-      {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
-    );
+              (position) => {
+                var initialPosition = position;
+                that.setState({initialPosition});
+                that.setState({pin: {
+                  longitude: initialPosition.coords.longitude,
+                  latitude: initialPosition.coords.latitude
+                }})
+                fetchData(that.state.pin.latitude, that.state.pin.longitude, that);
+              },
+              (error) => alert(error.message),
+              {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000}
+            )
+
     this.state.watchID = navigator.geolocation.watchPosition((position) => {
       var lastPosition = JSON.stringify(position);
       this.setState({lastPosition});
@@ -62,15 +62,22 @@ class weather extends Component {
   }
 
   componentWillUnmount() {
-    navigator.geolocation.clearWatch(this.state.watchID);
+    navigator.geolocation.clearWatch(this.watchID);
   }
 
   render() {
-
+    const region= {
+      latitude: this.state.pin.latitude,
+      longitude: this.state.pin.longitude,
+      latitudeDelta: this.state.latitudeDelta,
+      longitudeDelta: this.state.longitudeDelta,
+    }
+    watchID: (null: ?number);
     return (
       <View style= {styles.container}>
-        <MapView annotations= {[this.state.pin]} onRegionChangeComplete= {this.onRegionChangeComplete.bind(this)} style= {styles.map}>
+        <MapView region= {region} annotations= {this.state.pins} showsUserLocation={true} style= {styles.map}>
         </MapView>
+
       </View>
     );
   }

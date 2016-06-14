@@ -1,5 +1,5 @@
 const Yelp = require('yelp');
-const keys = require('../config/config.js');
+const keys = require('../config/config.sample.js');
 
 const yelp = new Yelp({
   consumer_key: keys.yelp.consumer_key,
@@ -13,9 +13,11 @@ module.exports = {
     return new Promise((resolve, reject) => {
        yelp.search({term: 'bar', ll: latLongString})
         .then(data => {
+          //console.log('yelp data', data);
           return resolve(data);
         })
           .catch(err => {
+            console.log('err', err);
             return reject(err);
           });
     });
