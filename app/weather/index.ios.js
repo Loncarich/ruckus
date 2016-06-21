@@ -28,21 +28,22 @@ class weather extends Component {
      }
   }
 
-  // onRegionChangeComplete(region) {
-  //   if(this.state.initialPosition !== '' && this.state.go) {
-  //     this.setState({pin: {
-  //       longitude: region.longitude,
-  //       latitude: region.latitude
-  //     }})
-  //     this.setState({go: false});
-  //   }
-  // }
+  onRegionChangeComplete(region) {
+    if(this.state.initialPosition) {
+      this.setState({pin: {
+        longitude: region.longitude,
+        latitude: region.latitude
+      }})
+      fetchData(this.state.pin.latitude, this.state.pin.longitude, this);
+    }
+  }
 
   componentDidMount() {
     const that= this;
     //Icon.getImageSource('md-beer', 30).then((source) => this.setState({ beerIcon: source }));
     navigator.geolocation.getCurrentPosition(
               (position) => {
+                console.log('test');
                 var initialPosition = position;
                 that.setState({initialPosition});
                 that.setState({pin: {
@@ -60,7 +61,8 @@ class weather extends Component {
       this.setState({lastPosition});
     });
   }
-
+  //34.019269
+  //-118.494344
   componentWillUnmount() {
     navigator.geolocation.clearWatch(this.watchID);
   }
@@ -75,7 +77,7 @@ class weather extends Component {
     watchID: (null: ?number);
     return (
       <View style= {styles.container}>
-        <MapView region= {region} annotations= {this.state.pins} showsUserLocation={true} style= {styles.map}>
+        <MapView region= {region} onRegionChangeComplete= {this.onRegionChangeComplete.bind(this)} annotations= {this.state.pins}  showsUserLocation={true} style= {styles.map}>
         </MapView>
 
       </View>

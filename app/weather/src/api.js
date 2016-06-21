@@ -23,12 +23,12 @@ function fetchCrime(latitude, longitude){
         return response.json();
       }).then(responseJSON => {
         var tempPins= JSON.parse(responseJSON.body);
-        //console.log('tempPins', tempPins)
+        console.log('tempPins', tempPins)
         var crimePins= tempPins.map(function(crime){
           return {latitude: crime.geo_crime_location.coordinates[1],
                   longitude: crime.geo_crime_location.coordinates[0],
                   title: crime.statistical_code_description,
-                  image: require('../skull20.png')};
+                  image: require('../knuckles.png')};
         });
         //console.log('tempPins', crimePins);
         var tempPins= this.state.pins.concat(crimePins);
@@ -59,9 +59,8 @@ function fetchVice(latitude, longitude){
     const barPins= barsArray.map(function(bar){
       return {latitude: bar.location.coordinate.latitude,
               longitude: bar.location.coordinate.longitude,
-              onFocus:
               title: bar.name,
-              image: require('../martini24.png')}})
+              image: require('../beer.png')}})
     //console.log('barPins', barPins);
     const tempPins= this.state.pins.concat(barPins);
     this.setState({pins: tempPins});
