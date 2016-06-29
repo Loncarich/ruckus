@@ -7,6 +7,7 @@ import {
   View
 } from 'react-native';
 import fetchData from './src/api.js';
+import _ from 'lodash';
 
 class weather extends Component {
   constructor(props) {
@@ -26,6 +27,11 @@ class weather extends Component {
       longitudeDelta: 0.03,
       latitudeDelta: 0.03
      }
+     this.debounceFetchData= this.debounceFetchData.bind(this)
+  }
+  debounceFetchData(){
+    console.log('inside debounceFetchData');
+    fetchData(this.state.pin.latitude, this.state.pin.longitude, this);
   }
 
   onRegionChangeComplete(region) {
@@ -34,13 +40,13 @@ class weather extends Component {
         longitude: region.longitude,
         latitude: region.latitude
       }})
-      fetchData(this.state.pin.latitude, this.state.pin.longitude, this);
+      console.log('inside region change complete');
+      _.debounce(this.debounceFetchData, 3000)();
     }
   }
 
   componentDidMount() {
     const that= this;
-    //Icon.getImageSource('md-beer', 30).then((source) => this.setState({ beerIcon: source }));
     navigator.geolocation.getCurrentPosition(
               (position) => {
                 console.log('test');
@@ -61,8 +67,6 @@ class weather extends Component {
       this.setState({lastPosition});
     });
   }
-  //34.019269
-  //-118.494344
   componentWillUnmount() {
     navigator.geolocation.clearWatch(this.watchID);
   }
@@ -77,7 +81,14 @@ class weather extends Component {
     watchID: (null: ?number);
     return (
       <View style= {styles.container}>
-        <MapView region= {region} onRegionChangeComplete= {this.onRegionChangeComplete.bind(this)} annotations= {this.state.pins}  showsUserLocation={true} style= {styles.map}>
+        <MapView region= {region}
+                 onRegionChangeComplete= {this.onRegionChangeComplete.bind(this)}
+                 annotations= {this.state.pins}
+                 showsUserLocation={true}
+                 zoomEnabled={true}
+                 scrollEnabled={true}
+                 style= {styles.map}>
+
         </MapView>
 
       </View>
